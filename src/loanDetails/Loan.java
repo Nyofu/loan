@@ -121,7 +121,13 @@ public class Loan {
 	
 	
 	private double monlthlyFixedPayment(){
-//		L[c(1 + c)^n]/[(1 + c)^n - 1]
+		/*
+		 * Monthly fixed payment calculated with this formula
+		 * 
+		 * Equation used: L[c(1 + c)^n]/[(1 + c)^n - 1]
+		 * 
+		 */
+
 		double rate_1 =1.0 + this.rate;
 		double a = Math.pow(rate_1, this.term);
 
@@ -143,12 +149,10 @@ public class Loan {
 			throw new IndexOutOfBoundsException("Addiditional Values size dose not match the term size");
 		}
 		else{
-//			synchronized (this.additionalPayments) {
-				for(int i = 0; i< this.additionalPayments.length; i++){
-					double val = additionalValues[i];
-					this.additionalPayments[i] = val;
-				}
-//			}
+			for(int i = 0; i< this.additionalPayments.length; i++){
+				double val = additionalValues[i];
+				this.additionalPayments[i] = val;
+			}
 		}
 		
 	}
@@ -164,24 +168,51 @@ public class Loan {
 	}
 	
 	
+	/**
+	 * Returns the additional amount for the loan.  Each month is the sum of the fixed and additional.
+	 * 
+	 * @return additional payments made.
+	 */
 	public double[] getAdditionalPayments(){
 		return this.additionalPayments;
 	}
 	
 	
+	/**
+	 * Adds an additional flat amount to the loan to be applied toward principle.
+	 * 
+	 * @param flatAditional
+	 */
 	public void addFlatAdditionalToEachMonth(double flatAditional){
 		this.flatAidditional = flatAditional;
 	}
 	
 	
+	/**
+	 * Returns all the payments made
+	 * 
+	 * @return all the payments made where index 0 is the first payment
+	 */
 	public Payment[] getPayments(){
 		return this.payments;
 	}
 	
+	/**
+	 * Fixed montly payment bases on this formula.
+	 * 		Equation used: L[c(1 + c)^n]/[(1 + c)^n - 1]
+	 * 
+	 * 
+	 * @return the fixed monthly payment
+	 */
 	public double getFixedMonthlyPayment(){
 		return this.fixedMonlthlyPayment;
 	}
 	
+	/**
+	 * How long the loan is for
+	 * 
+	 * @return the term of the loan
+	 */
 	public int getTerm(){
 		return this.term;
 	}
