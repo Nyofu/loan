@@ -18,7 +18,7 @@ public class Loan {
 	
 	
 	/**
-	 * 
+	 * Params cannot be null.
 	 * 
 	 * @param term
 	 * @param rate
