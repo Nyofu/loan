@@ -18,6 +18,8 @@ public class Loan {
 	
 	
 	/**
+	 * 
+	 * 
 	 * @param term
 	 * @param rate
 	 * @param loanAmount
