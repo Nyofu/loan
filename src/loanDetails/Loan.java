@@ -17,6 +17,12 @@ public class Loan {
 		
 	
 	
+	/**
+	 * @param term
+	 * @param rate
+	 * @param loanAmount
+	 * @throws NullPointerException
+	 */
 	public Loan(final int term, final double rate, final double loanAmount) throws NullPointerException{
 		this.term = term;
 		this.rate = rate;
