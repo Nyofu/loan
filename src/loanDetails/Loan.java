@@ -23,12 +23,10 @@ package loanDetails;
 
 
 /**
- * @author Arden
- *
- */
-/**
- * @author Arden
- *
+ * Processes a loan.  This class was desinged to help itemize loan payments to see where the individual is 
+ * 	in terms of paying off the loan.
+ * 
+ * @author Arden Gudger
  */
 public class Loan {
 
@@ -41,7 +39,7 @@ public class Loan {
 	private Payment[] payments= null;
 	private double flatAidditional = 0.0;
 	private double fixedMonlthlyPayment = 0.0;
-	
+	private boolean isProcessed = false;
 	
 	/**
 	 * Params cannot be null.
@@ -62,24 +60,39 @@ public class Loan {
 	
 	}
 	
-	public void processLoan(){
+
+	/**
+	 * Processes the loan based on term, rate, and loan amount.
+	 * 
+	 * If the process has already been ran with out resetting the values return of false
+	 * @return false is the process has not been ran and the loan was processed other wise true - process 
+	 * 	wave previously ran.
+	 */
+	public boolean processLoan(){
+		if(!isProcessed){
 		int i = 0;
 		for(Payment pmnt : this.payments){
 			
 			if(pmnt == null){
-				payment((0.0 + this.flatAidditional), i);
+				payment(this.additionalPayments[i] , i);
 			}
 			else{
-				payment(pmnt == null ? this.flatAidditional : (pmnt.getAdditional() + this.flatAidditional), i);
 				this.additionalPayments[i] = pmnt.getAdditional() + this.flatAidditional;
+				payment(pmnt == null ? this.flatAidditional : this.additionalPayments[i], i);
 			}
 		
 			i++;
 		}
+		}
+		return isProcessed;
 	}
 	
 	
+	/**
+	 * Resets the values and re runs the loan process.
+	 */
 	public void resetAndProcessLoan(){
+		isProcessed = false; 
 		this.term = term;
 		this.rate = rate;
 		this.adjustedPrinciple = this.loanAmount;
@@ -99,15 +112,20 @@ public class Loan {
 		double monthPrinc = this.payment - currentIntrest;
 		
 		this.adjustedPrinciple = this.adjustedPrinciple - monthPrinc;
-		this.adjustedPrinciple = this.adjustedPrinciple - (additionalPrinciple);
-		
+		this.adjustedPrinciple = this.adjustedPrinciple - additionalPrinciple;
 		payments[payementNumber] = new Payment(payementNumber, this.adjustedPrinciple, additionalPrinciple, currentIntrest);
 		
 	}
 	
 	
 	private double monlthlyFixedPayment(){
-//		L[c(1 + c)^n]/[(1 + c)^n - 1]
+		/*
+		 * Monthly fixed payment calculated with this formula
+		 * 
+		 * Equation used: L[c(1 + c)^n]/[(1 + c)^n - 1]
+		 * 
+		 */
+
 		double rate_1 =1.0 + this.rate;
 		double a = Math.pow(rate_1, this.term);
 
@@ -119,15 +137,19 @@ public class Loan {
 		return monthlyPayment;
 	}
 	
+	/**
+	 * add additional payments.  If the array length does not match the term exception is trown.
+	 * 
+	 * @param additionalValues
+	 */
 	public void setAdditationPayments(double[] additionalValues){
 		if(additionalValues.length != this.term){
 			throw new IndexOutOfBoundsException("Addiditional Values size dose not match the term size");
 		}
 		else{
-			synchronized (this.additionalPayments) {
-				for(int i = 0; i< this.additionalPayments.length; i++){
-					this.additionalPayments[i] = additionalValues[i];
-				}
+			for(int i = 0; i< this.additionalPayments.length; i++){
+				double val = additionalValues[i];
+				this.additionalPayments[i] = val;
 			}
 		}
 		
@@ -144,24 +166,51 @@ public class Loan {
 	}
 	
 	
+	/**
+	 * Returns the additional amount for the loan.  Each month is the sum of the fixed and additional.
+	 * 
+	 * @return additional payments made.
+	 */
 	public double[] getAdditionalPayments(){
 		return this.additionalPayments;
 	}
 	
 	
+	/**
+	 * Adds an additional flat amount to the loan to be applied toward principle.
+	 * 
+	 * @param flatAditional
+	 */
 	public void addFlatAdditionalToEachMonth(double flatAditional){
 		this.flatAidditional = flatAditional;
 	}
 	
 	
+	/**
+	 * Returns all the payments made
+	 * 
+	 * @return all the payments made where index 0 is the first payment
+	 */
 	public Payment[] getPayments(){
 		return this.payments;
 	}
 	
+	/**
+	 * Fixed montly payment bases on this formula.
+	 * 		Equation used: L[c(1 + c)^n]/[(1 + c)^n - 1]
+	 * 
+	 * 
+	 * @return the fixed monthly payment
+	 */
 	public double getFixedMonthlyPayment(){
 		return this.fixedMonlthlyPayment;
 	}
 	
+	/**
+	 * How long the loan is for
+	 * 
+	 * @return the term of the loan
+	 */
 	public int getTerm(){
 		return this.term;
 	}
