@@ -1,5 +1,35 @@
 package loanDetails;
 
+/**
+ * Loan.java
+ * Copyright (C) 2014  Nyofu - C. Arden Gudger
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License,
+ * with the "Linking Exception", which can be found at the license.txt
+ * file in this program.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * @author Arden Gudger 
+ * @email ardengudger@gmail.com
+ *
+ */
+
+
+
+/**
+ * @author Arden
+ *
+ */
+/**
+ * @author Arden
+ *
+ */
 public class Loan {
 
 	private int term;
@@ -10,11 +40,7 @@ public class Loan {
 	private double[] additionalPayments = null;
 	private Payment[] payments= null;
 	private double flatAidditional = 0.0;
-	
-	public int getTerm(){
-		return this.term;
-	}
-		
+	private double fixedMonlthlyPayment = 0.0;
 	
 	
 	/**
@@ -53,36 +79,34 @@ public class Loan {
 	}
 	
 	
-	public void reProcessLoanWithAditionalPayments(){
+	public void resetAndProcessLoan(){
 		this.term = term;
 		this.rate = rate;
-		this.adjustedPrinciple = loanAmount;
+		this.adjustedPrinciple = this.loanAmount;
 		processLoan();
-		
 	}
 	
-	public void payment( double additionalPrinciple, int i){
+	private void payment( double additionalPrinciple, int i){
 		payment(monlthlyFixedPayment(), additionalPrinciple, i);
 	}
-	
-	
-	
-	public void payment(double monthlyPayment, double additionalPrinciple, int payementNumber){
+
+		
+	private void payment(double monthlyPayment, double additionalPrinciple, int payementNumber){
 
 		this.payment = monthlyPayment;
 		
-		double currentIntrest = this.rate * adjustedPrinciple;
+		double currentIntrest = this.rate * this.adjustedPrinciple;
 		double monthPrinc = this.payment - currentIntrest;
 		
-		adjustedPrinciple = adjustedPrinciple - monthPrinc;
-		adjustedPrinciple = adjustedPrinciple - (additionalPrinciple);
+		this.adjustedPrinciple = this.adjustedPrinciple - monthPrinc;
+		this.adjustedPrinciple = this.adjustedPrinciple - (additionalPrinciple);
 		
-		payments[payementNumber] = new Payment(payementNumber, adjustedPrinciple, additionalPrinciple, currentIntrest);
+		payments[payementNumber] = new Payment(payementNumber, this.adjustedPrinciple, additionalPrinciple, currentIntrest);
 		
 	}
 	
 	
-	public double monlthlyFixedPayment(){
+	private double monlthlyFixedPayment(){
 //		L[c(1 + c)^n]/[(1 + c)^n - 1]
 		double rate_1 =1.0 + this.rate;
 		double a = Math.pow(rate_1, this.term);
@@ -91,8 +115,34 @@ public class Loan {
 		double d = a - 1;
 		 
 		double monthlyPayment = c / d;
+		this.fixedMonlthlyPayment = monthlyPayment;
 		return monthlyPayment;
 	}
+	
+	public void setAdditationPayments(double[] additionalValues){
+		if(additionalValues.length != this.term){
+			throw new IndexOutOfBoundsException("Addiditional Values size dose not match the term size");
+		}
+		else{
+			synchronized (this.additionalPayments) {
+				for(int i = 0; i< this.additionalPayments.length; i++){
+					this.additionalPayments[i] = additionalValues[i];
+				}
+			}
+		}
+		
+	}
+	
+	/**
+	 * adds an additional payment
+	 * 
+	 * @param additionalValue
+	 * @param paymentIndex
+	 */
+	public void setAnAdditionalPayment(double additionalValue, int paymentIndex){
+		this.additionalPayments[paymentIndex] = additionalValue;
+	}
+	
 	
 	public double[] getAdditionalPayments(){
 		return this.additionalPayments;
@@ -105,7 +155,15 @@ public class Loan {
 	
 	
 	public Payment[] getPayments(){
-		return payments;
+		return this.payments;
+	}
+	
+	public double getFixedMonthlyPayment(){
+		return this.fixedMonlthlyPayment;
+	}
+	
+	public int getTerm(){
+		return this.term;
 	}
 
 }
