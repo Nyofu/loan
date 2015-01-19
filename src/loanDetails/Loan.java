@@ -23,12 +23,10 @@ package loanDetails;
 
 
 /**
- * @author Arden
- *
- */
-/**
- * @author Arden
- *
+ * Processes a loan.  This class was desinged to help itemize loan payments to see where the individual is 
+ * 	in terms of paying off the loan.
+ * 
+ * @author Arden Gudger
  */
 public class Loan {
 
