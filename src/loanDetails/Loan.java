@@ -56,11 +56,6 @@ public class Loan {
 		this.adjustedPrinciple = loanAmount;
 		this.additionalPayments = new double[term];
 		this.payments = new Payment[term];
-
-
-
-
-	
 	}
 	
 
