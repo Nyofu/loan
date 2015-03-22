@@ -43,9 +43,9 @@ public class Payment {
 	 * @param additional - additional value added when calculating this payment (pre not post)
 	 * @param intrest - interst paid with this payment
 	 */
-	public Payment(int number, double base, double additional, double intrest){
+	public Payment(int number, double principle, double additional, double intrest){
 		this.number = number;
-		this.principleInteratedValue = base;
+		this.principleInteratedValue = principle;
 		this.additional = additional;
 		this.intrest = intrest;
 	}

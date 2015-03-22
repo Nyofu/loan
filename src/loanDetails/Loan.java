@@ -56,8 +56,6 @@ public class Loan {
 		this.adjustedPrinciple = loanAmount;
 		this.additionalPayments = new double[term];
 		this.payments = new Payment[term];
-
-	
 	}
 	
 
@@ -70,19 +68,18 @@ public class Loan {
 	 */
 	public boolean processLoan(){
 		if(!isProcessed){
-		int i = 0;
-		for(Payment pmnt : this.payments){
-			
-			if(pmnt == null){
-				payment(this.additionalPayments[i] , i);
-			}
-			else{
-				this.additionalPayments[i] = pmnt.getAdditional() + this.flatAidditional;
-				payment(pmnt == null ? this.flatAidditional : this.additionalPayments[i], i);
-			}
-		
-			i++;
-		}
+            int i = 0;
+            for(Payment pmnt : this.payments){
+
+                if(pmnt == null){
+                    this.payments[i] = payment(this.additionalPayments[i] + flatAidditional , i);
+                }
+                else{
+                    this.additionalPayments[i] = pmnt.getAdditional() + this.flatAidditional;
+                    this.payments[i] = payment(pmnt == null ? this.flatAidditional : this.additionalPayments[i], i);
+                }
+                i++;
+            }
 		}
 		return isProcessed;
 	}
@@ -93,18 +90,21 @@ public class Loan {
 	 */
 	public void resetAndProcessLoan(){
 		isProcessed = false; 
-		this.term = term;
-		this.rate = rate;
 		this.adjustedPrinciple = this.loanAmount;
 		processLoan();
 	}
-	
-	private void payment( double additionalPrinciple, int i){
-		payment(monlthlyFixedPayment(), additionalPrinciple, i);
+
+    private Payment payment(int i){
+        return payment(0.0, i);
+    }
+
+
+	private Payment payment( double additionalPrinciple, int i){
+		return payment(monlthlyFixedPayment(), additionalPrinciple, i);
 	}
 
 		
-	private void payment(double monthlyPayment, double additionalPrinciple, int payementNumber){
+	private Payment payment(double monthlyPayment, double additionalPrinciple, int payementNumber){
 
 		this.payment = monthlyPayment;
 		
@@ -113,7 +113,7 @@ public class Loan {
 		
 		this.adjustedPrinciple = this.adjustedPrinciple - monthPrinc;
 		this.adjustedPrinciple = this.adjustedPrinciple - additionalPrinciple;
-		payments[payementNumber] = new Payment(payementNumber, this.adjustedPrinciple, additionalPrinciple, currentIntrest);
+        return new Payment(payementNumber, this.adjustedPrinciple, additionalPrinciple, currentIntrest);
 		
 	}
 	
